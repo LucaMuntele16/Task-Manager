@@ -4,6 +4,8 @@ import tkinter
 from plyer import notification
 import threading
 import time
+import ctypes
+
 
 # Numele fișierului pentru stocare
 FILENAME = "tasks.txt"
@@ -64,11 +66,7 @@ def set_reminder():
     
     def reminder_notification():
         time.sleep(1 * 3)  # Așteaptă 3 secunde (1 * 3 secunde)
-        notification.notify(
-            title="Reminder Task",
-            message=f"Nu uita să: {task}",
-            timeout=10  # Afișează notificarea timp de 10 secunde
-        )
+        ctypes.windll.user32.MessageBoxW(0, f"Nu uita să: {task}", "Reminder Task", 0x40)
     
     # Pornim un thread pentru reminder
     threading.Thread(target=reminder_notification, daemon=True).start()
@@ -151,7 +149,10 @@ def show_number_of_tasks():
     #Cream un mesaj
     msg = "Numarul de Task-uri: %s" %number_of_tasks
     #Afisam mesajul
-    show_message(msg)  
+    show_message(msg)
+def on_exit():
+    """Închide fereastra grafică fără a opri thread-urile reminder."""
+    root.destroy()  # Închide fereastra Tkinter  
 
 
 
@@ -183,7 +184,7 @@ btn_sort_desc.grid(row=5,column=0,padx = 25)
 btn_numbers_of_tasks = tkinter.Button(root, text="Numarul de Task-uri",fg="#e0e0e0",bg="#283739",  command=show_number_of_tasks)
 btn_numbers_of_tasks.grid(row=6,column=0,padx = 25)
 
-btn_exit = tkinter.Button(root, text="Iesire",fg="#e0e0e0",bg="#283739",  command=exit)
+btn_exit = tkinter.Button(root, text="Iesire",fg="#e0e0e0",bg="#283739",  command=on_exit)
 btn_exit.grid(row=8,column=0,padx = 25)
 
 btn_reminder = tkinter.Button(root, text="Reminder", fg="#e0e0e0", bg="#283739", command=set_reminder)
